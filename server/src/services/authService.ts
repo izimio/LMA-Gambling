@@ -1,0 +1,50 @@
+import { EmailAuthModel } from "../models/EmailAuthModel";
+import { JWT_SECRET } from "../utils/config";
+import { ForbiddenError, ObjectNotFoundError } from "../utils/error";
+import jwt from "jsonwebtoken";
+import { sendEmail } from "./mailing";
+
+export const createAuthCode = async (email: string) => {
+    const code = Math.random().toString(36).substring(6);
+
+    const alreadyExists = await EmailAuthModel.findOne({
+        email,
+    });
+
+    if (alreadyExists) {
+        throw new ForbiddenError(
+            "Auth code already exists, attends 3 minutes stp"
+        );
+    }
+
+    await sendEmail(email, code);
+
+    await EmailAuthModel.create({
+        email,
+        code,
+    });
+};
+
+export const verifyAuthCode = async (email: string, code: string) => {
+    const auth = await EmailAuthModel.findOne({
+        email,
+    });
+
+    if (!auth) {
+        throw new ObjectNotFoundError("Auth code not found");
+    }
+
+    if (auth.code !== code) {
+        throw new ForbiddenError("Auth code not valid");
+    }
+
+    const token = jwt.sign(
+        {
+            email: auth.email,
+        },
+        JWT_SECRET,
+        { expiresIn: "365h" }
+    );
+
+    return token;
+};
