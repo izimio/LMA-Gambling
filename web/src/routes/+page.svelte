@@ -36,6 +36,9 @@
                 }
             }
         } else {
+            // set a test value for the cookie "token"
+            document.cookie = 'token=123456; path=/';
+
             // redirect to /dashboard
             goto('/dashboard');
             return;
