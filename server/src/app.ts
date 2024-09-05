@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 // Routers
 import versionRouter from "./routes/versionRoutes";
 import authRouter from "./routes/authRoutes";
+import gamblingRouter from "./routes/gamblingRoutes";
 
 import { Redis } from "ioredis";
 
@@ -84,5 +85,6 @@ app.use(errorMiddleware);
 
 useRoute(app, versionRouter);
 useRoute(app, authRouter);
+useRoute(app, gamblingRouter);
 
 export default serverKoa;

@@ -7,7 +7,8 @@ export const authMiddleware = async (
     ctx: Context,
     next: () => Promise<Middleware>
 ) => {
-    const token = ctx?.headers?.authorization?.split(" ")[1];
+    const token = ctx?.cookies?.get("token");
+    console.log("token", token);
     if (!token) {
         throw new AuthError("No token provided");
     }

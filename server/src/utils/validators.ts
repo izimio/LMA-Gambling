@@ -19,6 +19,13 @@ export const validateChallengeToken = yup.object().shape({
     signature: yup.string().required(),
 });
 
-export const validateSolanaAddress = yup.object().shape({
-    address: validateSolanaString,
+export const validateGambling = yup.object().shape({
+    title: yup.string().required(),
+    imageUrl: yup.string().required(),
+    choices: yup.array().of(yup.string().required()).required().min(2),
+});
+
+export const validateChoice = yup.object().shape({
+    choice: yup.array().of(yup.number().required()).required().min(1),
+    gamble: yup.number().required().min(0),
 });
