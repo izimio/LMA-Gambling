@@ -7,7 +7,7 @@ export interface IInvest {
 }
 
 const EmailAuthSchema = new mongoose.Schema<IInvest>({
-    createdAt: { type: Date, default: Date.now, expires: 60 * 3 },
+    createdAt: { type: Date, default: Date.now, expires: 60 * 5 },
     email: { type: String, required: true },
     code: { type: String, required: true },
 });

@@ -1,0 +1,35 @@
+services:
+  express:
+    build: ./server
+    env_file:
+      - server/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    networks:
+      - database
+
+  database:
+    image: mongo:latest
+    container_name: mongo
+    restart: unless-stopped
+    env_file:
+      - server/.env
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    command: ["--auth"]
+    networks:
+      - database
+
+
+networks:
+  database:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

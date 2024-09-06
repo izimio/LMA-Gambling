@@ -17,7 +17,6 @@ export const createAuthCode = async (email: string) => {
         );
     }
 
-    console.log(code);
     await sendEmail(email, code);
 
     await EmailAuthModel.create({
@@ -46,6 +45,8 @@ export const verifyAuthCode = async (email: string, code: string) => {
         JWT_SECRET,
         { expiresIn: "48h" }
     );
+
+    await EmailAuthModel.deleteOne({ email });
 
     return token;
 };
