@@ -90,7 +90,7 @@
 
                             {#if $emailSent}
                                 <input
-                                    type="text"
+                                    type="number"
                                     id="code"
                                     name="code"
                                     placeholder="Code de vérification"
