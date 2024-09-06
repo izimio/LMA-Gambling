@@ -19,6 +19,6 @@
         </ul>
     </div> -->
     <div class="navbar-end">
-        <button class="btn btn-primary" on:click={() => navigateTo('/profile')}>Profile</button>
+        <button class="btn btn-primary" on:click={() => navigateTo('/settings')}>Settings</button>
     </div>
 </div>

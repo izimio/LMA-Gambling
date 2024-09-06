@@ -30,7 +30,8 @@ export const load: PageLoad = async () => {
                 }
             ],
             owner: 'leroyerbaptiste@gmail.com',
-            ended: false
+            ended: false,
+            multiChoices: false
         },
         {
             _id: '2',
@@ -55,7 +56,8 @@ export const load: PageLoad = async () => {
                 }
             ],
             owner: 'leroyerbaptiste@gmail.com',
-            ended: false
+            ended: false,
+            multiChoices: false
         },
         {
             _id: '3',
@@ -74,7 +76,8 @@ export const load: PageLoad = async () => {
                 }
             ],
             owner: 'leroyerbaptiste@gmail.com',
-            ended: false
+            ended: false,
+            multiChoices: false
         },
         {
             _id: '4',
@@ -93,7 +96,8 @@ export const load: PageLoad = async () => {
                 }
             ],
             owner: 'leroyerbaptiste@gmail.com',
-            ended: false
+            ended: false,
+            multiChoices: false
         }
     ];
 

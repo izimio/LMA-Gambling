@@ -9,7 +9,8 @@ export interface IGambling {
         id: number;
     }[];
     owner: string;
-    ended: boolean
+    ended: boolean;
+    multiChoices: boolean;
 }
 
 interface IVote {
