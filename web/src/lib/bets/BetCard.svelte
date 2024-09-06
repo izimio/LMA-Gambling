@@ -12,7 +12,7 @@
 
     // Redirect to bet details page
     function goToBet(id: string) {
-        goto(`/bet/${id}`);
+        goto(`/bets/${id}`);
     }
 </script>
 

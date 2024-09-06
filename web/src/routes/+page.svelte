@@ -41,7 +41,7 @@
             localStorage.setItem('email', email);
 
             // redirect to /dashboard
-            goto('/dashboard');
+            goto('/bets');
             return;
 
             // Envoyer le code de vérification

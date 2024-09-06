@@ -75,6 +75,25 @@ export const load: PageLoad = async () => {
             ],
             owner: 'leroyerbaptiste@gmail.com',
             ended: false
+        },
+        {
+            _id: '4',
+            createdAt: new Date(),
+            title: 'Who will win the US presidential election?',
+            imageUrl: 'https://www.alleycat.org/wp-content/uploads/2019/03/FELV-cat.jpg',
+            votes: [],
+            choices: [
+                {
+                    title: 'Donald Trump',
+                    id: 0
+                },
+                {
+                    title: 'Joe Biden',
+                    id: 1
+                }
+            ],
+            owner: 'leroyerbaptiste@gmail.com',
+            ended: false
         }
     ];
 
