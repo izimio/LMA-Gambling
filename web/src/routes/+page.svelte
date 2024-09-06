@@ -37,7 +37,8 @@
             }
         } else {
             // set a test value for the cookie "token"
-            document.cookie = 'token=123456; path=/';
+            document.cookie = 'token=123456';
+            localStorage.setItem('email', email);
 
             // redirect to /dashboard
             goto('/dashboard');
