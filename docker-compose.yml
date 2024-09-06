@@ -26,6 +26,13 @@ services:
       - database
 
 
+  web:
+    build: ./web
+    env_file:
+      - web/.env
+    ports:
+      - "3000:3000"
+  
 networks:
   database:
     driver: bridge
