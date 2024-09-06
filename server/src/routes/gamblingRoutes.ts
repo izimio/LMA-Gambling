@@ -10,5 +10,6 @@ router.post("/", authMiddleware, methods.createGambling);
 router.post("/:gamblingId/vote", authMiddleware, methods.voteGambling);
 router.get("/:gamblingId", methods.getGambling);
 router.get("/", methods.getGamblings);
+router.put("/:gamblingId/close", authMiddleware, methods.closeGambling);
 
 export default router;

@@ -10,6 +10,7 @@ export interface IGambling {
         id: number;
     }[];
     owner: string;
+    ended: boolean;
 }
 
 interface IVote {
@@ -42,6 +43,7 @@ const GamblingSchema = new mongoose.Schema<IGambling>({
         ],
         required: true,
     },
+    ended: { type: Boolean, default: false },
 });
 
 export const GamblingModel = mongoose.model<IGambling>(

@@ -17,6 +17,7 @@ export const createAuthCode = async (email: string) => {
         );
     }
 
+    console.log(code);
     await sendEmail(email, code);
 
     await EmailAuthModel.create({

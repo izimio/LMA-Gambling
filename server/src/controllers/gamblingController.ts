@@ -71,3 +71,18 @@ export const getGamblings = async (ctx: Context) => {
         data: gamblings,
     };
 };
+
+export const closeGambling = async (ctx: Context) => {
+    const { gamblingId } = ctx.params;
+
+    if (!gamblingId) {
+        throw new ValidationError("GamblingId is required");
+    }
+
+    await gamblingServices.closeGambling(gamblingId, ctx.state.email);
+
+    ctx.status = 200;
+    ctx.body = {
+        ok: true,
+    };
+};

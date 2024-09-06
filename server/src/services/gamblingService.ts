@@ -1,5 +1,5 @@
 import { GamblingModel, IGambling } from "../models/GamblingModel";
-import { ForbiddenError, ObjectNotFoundError } from "../utils/error";
+import { AuthError, ForbiddenError, ObjectNotFoundError } from "../utils/error";
 
 export const createGambling = async (
     gambling: {
@@ -39,6 +39,10 @@ export const voteGambling = async (
         throw new ObjectNotFoundError("Gambling not found");
     }
 
+    if (gambling.ended == true) {
+        throw new ForbiddenError("You can vote for this gamble anymore");
+    }
+
     const vote = {
         email,
         choice,
@@ -68,4 +72,28 @@ export const getGamblings = async () => {
     const gamblings = await GamblingModel.find();
 
     return gamblings;
+};
+
+export const closeGambling = async (gamblingId: string, me: string) => {
+    const gambling = await GamblingModel.findById(gamblingId);
+
+    if (!gambling) {
+        throw new ObjectNotFoundError("Gambling not found");
+    }
+
+    if (gambling.owner != me) {
+        throw new AuthError("Nope");
+    }
+
+    if (gambling.ended == true) {
+        throw new ForbiddenError("Already closed gamble");
+    }
+
+    await GamblingModel.findByIdAndUpdate(gamblingId, {
+        ended: true,
+    });
+
+    return {
+        ok: true,
+    };
 };
