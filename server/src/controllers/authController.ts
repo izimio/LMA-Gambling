@@ -6,7 +6,7 @@ import { ValidationError } from "yup";
 export const getAuthCode = async (ctx: Context) => {
     const address = await validateEmail.validate(ctx.request.query.email);
 
-    const code = await authServices.createAuthCode(address);
+    await authServices.createAuthCode(address);
 
     ctx.status = 201;
     ctx.body = {

@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { sendEmail } from "./mailing";
 
 export const createAuthCode = async (email: string) => {
-    const code = Math.random().toString(36).substring(6);
+    const code = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
     const alreadyExists = await EmailAuthModel.findOne({
         email,
@@ -44,7 +44,7 @@ export const verifyAuthCode = async (email: string, code: string) => {
             email: auth.email,
         },
         JWT_SECRET,
-        { expiresIn: "365h" }
+        { expiresIn: "48h" }
     );
 
     return token;

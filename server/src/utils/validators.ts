@@ -23,6 +23,7 @@ export const validateGambling = yup.object().shape({
     title: yup.string().required(),
     imageUrl: yup.string().required(),
     choices: yup.array().of(yup.string().required()).required().min(2),
+    multiChoices: yup.bool().required(),
 });
 
 export const validateChoice = yup.object().shape({

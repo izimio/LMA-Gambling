@@ -17,9 +17,6 @@ import { Redis } from "ioredis";
 import { errorMiddleware } from "./middlewares/error";
 
 import {
-    REDIS_HOST,
-    REDIS_PORT,
-    REDIS_PASSWORD,
     ALLOWED_ORIGINS,
     MONGO_HOST,
     MONGO_PORT,

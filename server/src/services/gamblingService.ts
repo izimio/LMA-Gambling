@@ -1,11 +1,17 @@
 import { GamblingModel, IGambling } from "../models/GamblingModel";
-import { AuthError, ForbiddenError, ObjectNotFoundError } from "../utils/error";
+import {
+    AuthError,
+    ForbiddenError,
+    ObjectNotFoundError,
+    ValidationError,
+} from "../utils/error";
 
 export const createGambling = async (
     gambling: {
         title: string;
         imageUrl: string | undefined;
         choices: string[];
+        multiChoices: boolean;
     },
     owner: string
 ) => {
@@ -22,6 +28,7 @@ export const createGambling = async (
         choices: choices,
         votes: [],
         owner: owner,
+        multiChoices: gambling.multiChoices,
     });
 
     return gb;
@@ -41,6 +48,21 @@ export const voteGambling = async (
 
     if (gambling.ended == true) {
         throw new ForbiddenError("You can vote for this gamble anymore");
+    }
+
+    if (
+        gambling.multiChoices == true &&
+        choice.length != gambling.choices.length
+    ) {
+        throw new ValidationError(
+            "Invalid number of choice, needed multiple here"
+        );
+    }
+
+    if (gambling.multiChoices == false && choice.length != 1) {
+        throw new ValidationError(
+            "Invalid number of choice, only one possible here"
+        );
     }
 
     const vote = {
