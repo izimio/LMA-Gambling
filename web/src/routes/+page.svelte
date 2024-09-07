@@ -3,6 +3,8 @@
     import { writable } from 'svelte/store';
     import { goto } from '$app/navigation';
 
+    const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
+
     let email = '';
     let verificationCode = '';
     let emailSent = writable(false);
@@ -11,17 +13,10 @@
     async function handleSubmit(event: Event) {
         event.preventDefault();
         if (!$emailSent) {
-            // test
-            emailSent.set(true);
-            return;
-
-            // Envoyer l'e-mail
             try {
-                const response = await axios.post('http://localhost:3000/connexion', {
-                    email: email
-                });
+                const response = await axios.get(`${apiUrl}/auth?email=${email}`);
 
-                if (response.status === 200) {
+                if (response.status === 201) {
                     emailSent.set(true);
                 } else {
                     errorMessage.set(response.data.message || 'Erreur lors de l\'envoi de l\'e-mail.');
@@ -36,23 +31,18 @@
                 }
             }
         } else {
-            // set a test value for the cookie "token"
-            document.cookie = 'token=123456';
-            localStorage.setItem('email', email);
-
-            // redirect to /dashboard
-            goto('/bets');
-            return;
-
-            // Envoyer le code de vérification
             try {
-                const response = await axios.post('http://localhost:3000/verifier-code', {
+                console.log({ email: email, code: verificationCode, });
+
+                const response = await axios.post(`${apiUrl}/auth?email=${email}`, {
                     email: email,
-                    code: verificationCode
+                    code: verificationCode.toString(),
                 });
 
                 if (response.status === 200) {
-                    // Authentification réussie, faire quelque chose...
+                    localStorage.setItem('email', email);
+
+                    goto('/bets');
                 } else {
                     errorMessage.set(response.data.message || 'Code de vérification incorrect.');
                 }
