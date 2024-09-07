@@ -12,6 +12,8 @@
     let choices = bet.choices;
     let votes = bet.votes;
 
+    let gamble: number; // the amount of money the user wants to bet
+
     let sortedChoices: any[] = [];
     let maxScore = 0;
     let selectedChoices: any[] = [];
@@ -55,8 +57,35 @@
         return scores;
     }
 
-    function updateChoicesInDb(choices: number[]) {
+    function updateChoicesInDb() {
         // build an array of choice ids
+        let choices: number[];
+        if (bet.multiChoices) {
+            choices = multiChoicesOptions.map(option => option.id);
+        } else {
+            if (!uniChoicesOption) {
+                alert('Please select a choice');
+                return;
+            }
+            choices = [uniChoicesOption];
+        }
+
+        if (!gamble) {
+            alert('Please enter the amount of money you want to bet');
+            return;
+        }
+
+        if (gamble < 1000) {
+            alert('The minimum amount of money you can bet is 1000 ₩');
+            return;
+        }
+
+        const data = {
+            "choice": choices,
+            "gamble": gamble
+        };
+
+        console.log('Data:', data);
     }
 
     function upChoice(id: number) {
@@ -67,7 +96,6 @@
             multiChoicesOptions[index - 1] = temp;
         }
         const choices = multiChoicesOptions.map(option => option.id);
-        updateChoicesInDb(choices);
     }
 
     function downChoice(id: number) {
@@ -78,12 +106,10 @@
             multiChoicesOptions[index + 1] = temp;
         }
         const choices = multiChoicesOptions.map(option => option.id);
-        updateChoicesInDb(choices);
     }
 
     function switchChoice(id: number) {
         uniChoicesOption = id;
-        updateChoicesInDb([id]);
     }
 </script>
 
@@ -136,6 +162,25 @@
                         </div>
                     </div>
                 {/if}
+
+                <!-- Gamble Section -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold mb-2">Make your bet (₩)</h3>
+                    <input
+                        type="number"
+                        class="input input-bordered w-full"
+                        bind:value={gamble}
+                        on:input={(e) => gamble = parseInt(e.target.value)}
+                        placeholder="Enter the amount of money you want to bet"
+                    />
+                </div>
+
+                <!-- Bet Button Section -->
+                <div class="mt-8">
+                    <button class="btn btn-primary w-full" on:click={() => updateChoicesInDb()}>
+                        Bet
+                    </button>
+                </div>
 
                 <!-- Pie Chart Section -->
                 {#if !bet.multiChoices}
