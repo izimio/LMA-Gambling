@@ -34,10 +34,16 @@
             try {
                 console.log({ email: email, code: verificationCode, });
 
-                const response = await axios.post(`${apiUrl}/auth?email=${email}`, {
-                    email: email,
-                    code: verificationCode.toString(),
-                });
+                const response = await axios.post(
+                    `${apiUrl}/auth?email=${email}`,
+                    {
+                        email: email,
+                        code: verificationCode.toString(),
+                    },
+                    {
+                        withCredentials: true,
+                    }
+                );
 
                 if (response.status === 200) {
                     localStorage.setItem('email', email);
