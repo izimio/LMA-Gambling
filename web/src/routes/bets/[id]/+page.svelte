@@ -36,6 +36,7 @@
         const userVote = votes.find(vote => vote.email === localStorage.getItem('email'));
         if (userVote) {
             selectedChoices = userVote.choice;
+            gamble = userVote.gamble;
         } else {
             selectedChoices = choices.map(choice => choice.id);
         }
@@ -93,7 +94,13 @@
         console.log('Data:', data);
 
         try {
-            const response = await axios.post(`${apiUrl}/gambling/${bet._id}/vote`)
+            const response = await axios.post(
+                `${apiUrl}/gambling/${bet._id}/vote`,
+                data,
+                {
+                    withCredentials: true
+                }
+            )
 
             if (response.status === 200) {
                 alert('Your bet has been successfully registered');
@@ -243,6 +250,7 @@
 
                 <!-- Admin section (delete button) -->
                  {#if bet.owner === email}
+                    <h3 class="text-xl font-semibold mb-2">Admin</h3>
                     <div class="mt-8 flex space-x-4">
                         <button class="flex-1 btn btn-error" on:click={() => deleteBet()}>
                             Delete
