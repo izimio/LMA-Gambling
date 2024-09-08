@@ -1,11 +1,18 @@
 <script lang='ts'>
     import type { PageData } from './$types';
     import { onMount } from 'svelte';
+    import axios from 'axios';
+    import { writable } from 'svelte/store';
 
     import Navbar from '$lib/Navbar.svelte';
     import PieChart from '$lib/PieChart.svelte';
 
+    const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
+
     export let data: PageData;
+
+    let errorMessage = writable('');
+    let email: string;
 
     let bet = data.bet;
 
@@ -22,11 +29,14 @@
     let uniChoicesOption: number;
 
     onMount(() => {
+        email = localStorage.getItem('email');
+
         sortedChoices = calculateScores(choices, votes);
         maxScore = (sortedChoices.length - 1) * votes.length;
         const userVote = votes.find(vote => vote.email === localStorage.getItem('email'));
         if (userVote) {
             selectedChoices = userVote.choice;
+            gamble = userVote.gamble;
         } else {
             selectedChoices = choices.map(choice => choice.id);
         }
@@ -57,16 +67,12 @@
         return scores;
     }
 
-    function updateChoicesInDb() {
+    async function updateChoicesInDb() {
         // build an array of choice ids
         let choices: number[];
         if (bet.multiChoices) {
             choices = multiChoicesOptions.map(option => option.id);
         } else {
-            if (!uniChoicesOption) {
-                alert('Please select a choice');
-                return;
-            }
             choices = [uniChoicesOption];
         }
 
@@ -86,6 +92,25 @@
         };
 
         console.log('Data:', data);
+
+        try {
+            const response = await axios.post(
+                `${apiUrl}/gambling/${bet._id}/vote`,
+                data,
+                {
+                    withCredentials: true
+                }
+            )
+
+            if (response.status === 200) {
+                alert('Your bet has been successfully registered');
+            } else {
+                errorMessage.set('Error while registering your bet');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorMessage.set('Error while registering your bet');
+        }
     }
 
     function upChoice(id: number) {
@@ -110,6 +135,10 @@
 
     function switchChoice(id: number) {
         uniChoicesOption = id;
+    }
+
+    async function deleteBet() {
+
     }
 </script>
 
@@ -180,6 +209,9 @@
                     <button class="btn btn-primary w-full" on:click={() => updateChoicesInDb()}>
                         Bet
                     </button>
+                    {#if $errorMessage}
+                        <div class="text-red-500 mt-4">{$errorMessage}</div>
+                    {/if}
                 </div>
 
                 <!-- Pie Chart Section -->
@@ -191,29 +223,43 @@
                 {:else}
                     <div class="mt-8">
                         <h3 class="text-xl font-semibold mb-2">Results</h3>
-                        <div class="flex flex-col space-y-4">
-                            {#each sortedChoices as choice (choice.id)}
-                                <div class="flex items-center space-x-4">
-                                    <!-- Label Section with Fixed Width -->
-                                    <span class="font-semibold w-32 overflow-hidden whitespace-nowrap text-overflow-ellipsis" title={choice.title}>
-                                        {choice.title}
-                                    </span>
+                        {#if sortedChoices.length === 0}
+                            <p class="text-gray-600">No votes yet</p>
+                        {:else}
+                            <div class="flex flex-col space-y-4">
+                                {#each sortedChoices as choice (choice.id)}
+                                    <div class="flex items-center space-x-4">
+                                        <span class="font-semibold w-32 overflow-hidden whitespace-nowrap text-overflow-ellipsis" title={choice.title}>
+                                            {choice.title}
+                                        </span>
 
-                                    <!-- Bar Section with Score -->
-                                    <div class="flex-grow bg-gray-200 rounded-full relative h-4">
-                                        <div
-                                            class="bg-blue-500 h-4 rounded-full"
-                                            style={`width: ${maxScore > 0 ? (choice.score / maxScore) * 100 : 0}%`}
-                                        ></div>
+                                        <div class="flex-grow bg-gray-200 rounded-full relative h-4">
+                                            <div
+                                                class="bg-blue-500 h-4 rounded-full"
+                                                style={`width: ${maxScore > 0 ? (choice.score / maxScore) * 100 : 0}%`}
+                                            ></div>
+                                        </div>
+
+                                        <span class="text-gray-600 ml-4">{choice.score} points</span>
                                     </div>
-
-                                    <!-- Score Display Section -->
-                                    <span class="text-gray-600 ml-4">{choice.score} points</span>
-                                </div>
-                            {/each}
-                        </div>
+                                {/each}
+                            </div>
+                        {/if}
                     </div>
                 {/if}
+
+                <!-- Admin section (delete button) -->
+                 {#if bet.owner === email}
+                    <h3 class="text-xl font-semibold mb-2">Admin</h3>
+                    <div class="mt-8 flex space-x-4">
+                        <button class="flex-1 btn btn-error" on:click={() => deleteBet()}>
+                            Delete
+                        </button>
+                        <button class="flex-1 btn btn-warning" on:click={() => alert("closing bet")}>
+                            Close
+                        </button>
+                    </div>
+                 {/if}
             </div>
         </div>
     </div>

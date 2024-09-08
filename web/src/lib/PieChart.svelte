@@ -17,6 +17,8 @@
         }, 0);
     });
 
+    const totalVotes = voteCounts.reduce((acc, count) => acc + count, 0);
+
     const data = {
         labels: choices.map(choice => choice.title),
         datasets: [{
@@ -49,5 +51,9 @@
 </script>
 
 <div class="w-full max-w-md mx-auto">
-    <Pie {data} {options} />
+    {#if totalVotes > 0}
+        <Pie {data} {options} />
+    {:else}
+        <p class="text-center text-gray-600">There are no votes yet.</p>
+    {/if}
 </div>

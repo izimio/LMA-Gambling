@@ -1,11 +1,17 @@
 <script lang="ts">
+    import axios from 'axios';
+
     import { writable } from 'svelte/store';
     import Navbar from '$lib/Navbar.svelte';
+
+    const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
 
     let title = '';
     let imageUrl = '';
     let multiChoices = false;
     let choices = writable<string[]>([]);
+
+    let errorMessage = writable('');
 
     function addChoice() {
         choices.update(currentChoices => [...currentChoices, '']);
@@ -22,14 +28,53 @@
         });
     }
 
-    function submitBet() {
+    async function submitBet() {
         const betData = {
             title,
             imageUrl,
             multiChoices,
             choices: $choices
         };
-        console.log('Bet Data:', betData);
+        // console.log('Bet Data:', betData);
+
+        if (!title) {
+            errorMessage.set('Title is required.');
+            return;
+        } else if (!imageUrl) {
+            errorMessage.set('Image URL is required.');
+            return;
+        } else if ($choices.length < 2) {
+            errorMessage.set('At least 2 choices are required.');
+            return;
+        }
+
+        try {
+            const response = await axios.post(
+                `${apiUrl}/gambling`,
+                betData,
+                {
+                    withCredentials: true,
+                }
+            );
+
+            if (response.status === 201) {
+                errorMessage.set('');
+                title = '';
+                imageUrl = '';
+                multiChoices = false;
+                choices.set([]);
+            } else {
+                errorMessage.set('Error while creating the bet.');
+            }
+        } catch (error: any) {
+            if (error.response) {
+                errorMessage.set(error.response.data.message || 'Erreur lors de la connexion à l\'API.');
+            } else if (error.request) {
+                errorMessage.set('Aucune réponse du serveur.');
+            } else {
+                errorMessage.set('Erreur lors de la requête.');
+            }
+        }
     }
 </script>
 
@@ -103,6 +148,10 @@
                     <div class="mt-6">
                         <button class="btn w-full btn-success" on:click={submitBet}>Submit Bet</button>
                     </div>
+
+                    {#if $errorMessage}
+                        <div class="text-red-500 mt-4">{$errorMessage}</div>
+                    {/if}
                 </div>
             </div>
         </div>

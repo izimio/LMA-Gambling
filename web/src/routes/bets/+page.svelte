@@ -23,9 +23,11 @@
     <div class="flex-grow flex flex-col space-y-4">
         <!-- Bets Grid -->
          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-8">
-            {#each bets as bet (bet._id)}
-                <BetCard {bet} />
-            {/each}
+            {#if bets.length > 0}
+                {#each bets as bet (bet._id)}
+                    <BetCard {bet} />
+                {/each}
+            {/if}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div
