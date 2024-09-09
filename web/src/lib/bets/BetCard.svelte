@@ -32,6 +32,11 @@
             {#if new Date(bet.createdAt).getTime() > new Date().getTime() - 3 * 24 * 60 * 60 * 1000}
                 <div class="badge badge-secondary">NEW</div>
             {/if}
+            {#if !bet.ended}
+                <div class="badge badge-success">OPEN</div>
+            {:else}
+                <div class="badge badge-error">CLOSED</div>
+            {/if}
             {#if bet.votes.some(vote => vote.email === email)}
                 <div class="badge badge-primary">VOTED</div>
             {:else}

@@ -119,7 +119,7 @@
                 seeToast.set(true);
                 setTimeout(() => {
                     location.reload();
-                }, 3000);
+                }, 1000);
             } else {
                 errorMessage.set('Error while registering your bet');
             }
@@ -155,6 +155,30 @@
 
     async function deleteBet() {
 
+    }
+
+    async function closeBet() {
+        try {
+            const response = await axios.put(
+                `${apiUrl}/gambling/${bet._id}/close`,
+                {},
+                {
+                    withCredentials: true
+                }
+            )
+
+            if (response.status === 200) {
+                // wait 2 seconds before reloading the page
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                errorMessage.set('Error while closing the bet');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorMessage.set('Error while closing the bet');
+        }
     }
 </script>
 
@@ -278,14 +302,18 @@
 
                 <!-- Admin section (delete button) -->
                  {#if bet.owner === email}
-                    <h3 class="text-xl font-semibold mb-2">Admin</h3>
-                    <div class="mt-8 flex space-x-4">
-                        <button class="flex-1 btn btn-error" on:click={() => deleteBet()}>
-                            Delete
-                        </button>
-                        <button class="flex-1 btn btn-warning" on:click={() => alert("closing bet")}>
-                            Close
-                        </button>
+                    <div class="mt-8">
+                        <h3 class="text-xl font-semibold mb-2">Admin</h3>
+                        <div class="flex space-x-4">
+                            <!-- <button class="flex-1 btn btn-error" on:click={() => deleteBet()}>
+                                Delete
+                            </button> -->
+                            {#if !bet.ended}
+                                <button class="flex-1 btn btn-warning" on:click={() => closeBet()}>
+                                    Close
+                                </button>
+                            {/if}
+                        </div>
                     </div>
                  {/if}
             </div>
