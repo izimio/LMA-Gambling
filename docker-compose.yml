@@ -19,7 +19,7 @@ services:
       - MAILJET_API_SECRET=${MAILJET_API_SECRET}
       - MAILJET_FROM_EMAIL=${MAILJET_FROM_EMAIL}
     ports:
-      - "8080:8080"
+      - "8080:3006"
     depends_on:
       - database
     networks:
@@ -32,7 +32,7 @@ services:
     env_file:
       - server/.env
     ports:
-      - "27017:27017"
+      - "27017:3007"
     volumes:
       - mongo-data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -48,7 +48,7 @@ services:
     environment:
       - VITE_PUBLIC_API_URL=${VITE_PUBLIC_API_URL}
     ports:
-      - "3000:3000"
+      - "3000:3008"
 
 networks:
   database:
