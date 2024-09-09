@@ -3,6 +3,21 @@ services:
     build: ./server
     env_file:
       - server/.env
+    environment:
+      - PORT=${PORT}
+      - VERSION=${VERSION}
+      - JWT_SECRET=${JWT_SECRET}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_PORT=${MONGO_PORT}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MAILJET_API_KEY=${MAILJET_API_KEY}
+      - MAILJET_API_SECRET=${MAILJET_API_SECRET}
+      - MAILJET_FROM_EMAIL=${MAILJET_FROM_EMAIL}
     ports:
       - "8080:8080"
     depends_on:
@@ -30,9 +45,11 @@ services:
     build: ./web
     env_file:
       - web/.env
+    environment:
+      - VITE_PUBLIC_API_URL=${VITE_PUBLIC_API_URL}
     ports:
       - "3000:3000"
-  
+
 networks:
   database:
     driver: bridge
