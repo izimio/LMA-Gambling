@@ -119,7 +119,7 @@
                 seeToast.set(true);
                 setTimeout(() => {
                     location.reload();
-                }, 3000);
+                }, 1000);
             } else {
                 errorMessage.set('Error while registering your bet');
             }

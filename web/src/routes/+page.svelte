@@ -23,7 +23,7 @@
                     seeToast.set(true);
                     setTimeout(() => {
                         seeToast.set(false);
-                    }, 3000);
+                    }, 1000);
                 } else {
                     errorMessage.set(response.data.message || 'Erreur lors de l\'envoi de l\'e-mail.');
                 }

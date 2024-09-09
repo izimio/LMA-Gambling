@@ -67,7 +67,7 @@
                 seeToast.set(true);
                 setTimeout(() => {
                     goto(`/bets/${id}`);
-                }, 2000);
+                }, 500);
             } else {
                 errorMessage.set('Error while creating the bet.');
             }
