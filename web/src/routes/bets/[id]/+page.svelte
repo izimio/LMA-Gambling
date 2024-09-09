@@ -12,6 +12,7 @@
 
     export let data: PageData;
 
+    let seeToast = writable(false);
     let errorMessage = writable('');
     let email: string | null;
 
@@ -85,12 +86,14 @@
         }
 
         if (!gamble) {
-            alert('Please enter the amount of money you want to bet');
+            // alert('Please enter the amount of money you want to bet');
+            errorMessage.set('Please enter the amount of money you want to bet');
             return;
         }
 
         if (gamble < 1000) {
-            alert('The minimum amount of money you can bet is 1000 ₩');
+            // alert('The minimum amount of money you can bet is 1000 ₩');
+            errorMessage.set('The minimum amount of money you can bet is 1000 ₩');
             return;
         }
 
@@ -111,12 +114,12 @@
             )
 
             if (response.status === 200) {
-                alert('Your bet has been successfully registered');
-
                 // wait 2 seconds before reloading the page
+                errorMessage.set('');
+                seeToast.set(true);
                 setTimeout(() => {
                     location.reload();
-                }, 2000);
+                }, 3000);
             } else {
                 errorMessage.set('Error while registering your bet');
             }
@@ -288,4 +291,17 @@
             </div>
         </div>
     </div>
+
+    <!-- Toast notification -->
+    {#if $seeToast}
+        <div class="toast toast-top toast-center">
+            <div class="alert alert-success">
+                <div>
+                    <span>
+                        Your bet has been successfully registered
+                    </span>
+                </div>
+            </div>
+        </div>
+    {/if}
 </main>
