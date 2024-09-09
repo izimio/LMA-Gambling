@@ -3,8 +3,11 @@
 
     import { writable } from 'svelte/store';
     import Navbar from '$lib/Navbar.svelte';
+    import { goto } from '$app/navigation';
 
     const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
+
+    let seeToast = writable(false);
 
     let title = '';
     let imageUrl = '';
@@ -59,10 +62,12 @@
 
             if (response.status === 201) {
                 errorMessage.set('');
-                title = '';
-                imageUrl = '';
-                multiChoices = false;
-                choices.set([]);
+                const id = response.data.data._id;
+                // wait 2 seconds before redirecting to the bet page
+                seeToast.set(true);
+                setTimeout(() => {
+                    goto(`/bets/${id}`);
+                }, 2000);
             } else {
                 errorMessage.set('Error while creating the bet.');
             }
@@ -156,4 +161,17 @@
             </div>
         </div>
     </div>
+
+    <!-- Toast notification -->
+    {#if $seeToast}
+        <div class="toast toast-top toast-center">
+            <div class="alert alert-success">
+                <div>
+                    <span>
+                        Your bet has been successfully created
+                    </span>
+                </div>
+            </div>
+        </div>
+    {/if}
 </main>

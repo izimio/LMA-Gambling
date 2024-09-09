@@ -38,7 +38,7 @@
                     <img
                         src={"/plus.png"}
                         alt="Bet illustration"
-                        class="p-24"
+                        class="p-24 max-h-96"
                     />
                 </figure>
                 <div class="card-body p-4">
