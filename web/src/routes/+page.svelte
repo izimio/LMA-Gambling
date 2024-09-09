@@ -9,6 +9,7 @@
     let verificationCode = '';
     let emailSent = writable(false);
     let errorMessage = writable('');
+    let seeToast = writable(false);
 
     async function handleSubmit(event: Event) {
         event.preventDefault();
@@ -18,6 +19,11 @@
 
                 if (response.status === 201) {
                     emailSent.set(true);
+
+                    seeToast.set(true);
+                    setTimeout(() => {
+                        seeToast.set(false);
+                    }, 3000);
                 } else {
                     errorMessage.set(response.data.message || 'Erreur lors de l\'envoi de l\'e-mail.');
                 }
@@ -114,4 +120,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Toast notification -->
+    {#if $seeToast}
+        <div class="toast toast-top toast-center">
+            <div class="alert alert-success">
+                <div>
+                    <span>Le code de vérification a été envoyé dans votre boite mail</span>
+                </div>
+            </div>
+        </div>
+    {/if}
 </main>
