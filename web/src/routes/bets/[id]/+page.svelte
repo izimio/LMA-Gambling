@@ -6,13 +6,14 @@
 
     import Navbar from '$lib/Navbar.svelte';
     import PieChart from '$lib/PieChart.svelte';
+    import { goto } from '$app/navigation';
 
     const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
 
     export let data: PageData;
 
     let errorMessage = writable('');
-    let email: string;
+    let email: string | null;
 
     let bet = data.bet;
 
@@ -28,19 +29,26 @@
     let multiChoicesOptions: any[] = [];
     let uniChoicesOption: number;
 
+    let alreadyVoted = false;
+
     onMount(() => {
         email = localStorage.getItem('email');
+        if (email === null) {
+            goto('/');
+        }
+
+        alreadyVoted = votes.some(vote => vote.email === localStorage.getItem('email'));
 
         sortedChoices = calculateScores(choices, votes);
         maxScore = (sortedChoices.length - 1) * votes.length;
+
         const userVote = votes.find(vote => vote.email === localStorage.getItem('email'));
-        if (userVote) {
+        if (alreadyVoted && userVote) {
             selectedChoices = userVote.choice;
             gamble = userVote.gamble;
         } else {
             selectedChoices = choices.map(choice => choice.id);
         }
-
         uniChoicesOption = userVote ? userVote.choice[0] : choices[0].id;
 
         // Initialize multiChoicesOptions thanks to selectedChoices
@@ -104,6 +112,11 @@
 
             if (response.status === 200) {
                 alert('Your bet has been successfully registered');
+
+                // wait 2 seconds before reloading the page
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
             } else {
                 errorMessage.set('Error while registering your bet');
             }
@@ -150,69 +163,81 @@
     <div class="flex flex-col items-center p-8 bg-base-100">
         <div class="card bg-base-200 shadow-xl rounded-lg max-w-4xl w-full p-6">
             <figure>
-                <img src={bet.imageUrl} alt={bet.title} class="w-full h-64 object-cover rounded-t-lg"/>
+                <img src={bet.imageUrl} alt={bet.title} class="w-full max-h-96 object-cover rounded-t-lg"/>
             </figure>
             <div class="card-body">
-                <h2 class="card-title text-2xl font-bold">{bet.title}</h2>
+                <h1 class="card-title text-3xl font-bold">{bet.title}</h1>
                 <p class="text-gray-700"><strong>Owner:</strong> {bet.owner}</p>
                 <p class="text-gray-700"><strong>Created At:</strong> {new Date(bet.createdAt).toLocaleDateString()}</p>
                 <p class="text-gray-700"><strong>Ended:</strong> {bet.ended ? 'Yes' : 'No'}</p>
 
-                <!-- Choices Section -->
-                {#if bet.multiChoices}
-                    <div class="mt-8">
-                        <h3 class="text-xl font-semibold mb-2">Order Your Choices</h3>
-                        <div class="flex flex-col space-y-4">
-                            {#each multiChoicesOptions as option (option.id)}
-                                <div
-                                    class="flex items-center space-x-4 bg-base-100 p-2 rounded-lg item"
-                                >
-                                    <div class="flex flex-col gap-2">
-                                        <button class="btn btn-sm" on:click={() => upChoice(option.id)}>▲</button>
-                                        <button class="btn btn-sm" on:click={() => downChoice(option.id)}>▼</button>
-                                    </div>
-                                    <span class="font-semibold">{option.title}</span>
-                                </div>
-                            {/each}
-                        </div>
-                    </div>
+                {#if alreadyVoted}
+                    <p class="text-gray-700"><strong>Your bet:</strong> {
+                        selectedChoices.map((choice, index) => {
+                                return (index + 1) + ": " + choices.find(c => c.id === choice).title
+                            }).join(', ')
+                        }
+                    </p>
+                    <p class="text-gray-700"><strong>Your gamble:</strong> {gamble} ₩</p>
                 {:else}
-                    <div class="mt-8">
-                        <h3 class="text-xl font-semibold mb-2">Select your choice</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                            {#each choices as choice}
-                                <button
-                                    class={`btn ${uniChoicesOption === choice.id ? 'bg-base-100' : 'bg-base-300'}`}
-                                    on:click={() => switchChoice(choice.id)}
-                                >
-                                    {choice.title}
-                                </button>
-                            {/each}
+                    <!-- Choices Section -->
+                    {#if bet.multiChoices}
+                        <div class="mt-8">
+                            <h3 class="text-xl font-semibold mb-2">Order Your Choices</h3>
+                            <div class="flex flex-col space-y-4">
+                                {#each multiChoicesOptions as option (option.id)}
+                                    <div
+                                        class="flex items-center space-x-4 bg-base-100 p-2 rounded-lg item"
+                                    >
+                                        <div class="flex flex-col gap-2">
+                                            <button class="btn btn-sm" on:click={() => upChoice(option.id)}>▲</button>
+                                            <button class="btn btn-sm" on:click={() => downChoice(option.id)}>▼</button>
+                                        </div>
+                                        <span class="font-semibold">{option.title}</span>
+                                    </div>
+                                {/each}
+                            </div>
                         </div>
-                    </div>
+                    {:else}
+                        <div class="mt-8">
+                            <h3 class="text-xl font-semibold mb-2">Select your choice</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                {#each choices as choice}
+                                    <button
+                                        class={`btn ${uniChoicesOption === choice.id ? 'bg-base-100' : 'bg-base-300'}`}
+                                        on:click={() => switchChoice(choice.id)}
+                                    >
+                                        {choice.title}
+                                    </button>
+                                {/each}
+                            </div>
+                        </div>
+                    {/if}
                 {/if}
 
                 <!-- Gamble Section -->
-                <div class="mt-8">
-                    <h3 class="text-xl font-semibold mb-2">Make your bet (₩)</h3>
-                    <input
-                        type="number"
-                        class="input input-bordered w-full"
-                        bind:value={gamble}
-                        on:input={(e) => gamble = parseInt(e.target.value)}
-                        placeholder="Enter the amount of money you want to bet"
-                    />
-                </div>
+                {#if !alreadyVoted}
+                    <div class="mt-8">
+                        <h3 class="text-xl font-semibold mb-2">Make your bet (₩)</h3>
+                        <input
+                            type="number"
+                            class="input input-bordered w-full"
+                            bind:value={gamble}
+                            on:input={(e) => gamble = parseInt(e.target.value)}
+                            placeholder="Enter the amount of money you want to bet"
+                        />
+                    </div>
 
-                <!-- Bet Button Section -->
-                <div class="mt-8">
-                    <button class="btn btn-primary w-full" on:click={() => updateChoicesInDb()}>
-                        Bet
-                    </button>
-                    {#if $errorMessage}
-                        <div class="text-red-500 mt-4">{$errorMessage}</div>
-                    {/if}
-                </div>
+                    <!-- Bet Button Section -->
+                    <div class="mt-8">
+                        <button class="btn btn-primary w-full" on:click={() => updateChoicesInDb()}>
+                            Bet
+                        </button>
+                        {#if $errorMessage}
+                            <div class="text-red-500 mt-4">{$errorMessage}</div>
+                        {/if}
+                    </div>
+                {/if}
 
                 <!-- Pie Chart Section -->
                 {#if !bet.multiChoices}
