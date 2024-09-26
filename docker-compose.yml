@@ -1,44 +1,44 @@
 services:
-  express:
-    build: ./server
-    env_file:
-      - server/.env
-    environment:
-      - PORT=${PORT}
-      - VERSION=${VERSION}
-      - JWT_SECRET=${JWT_SECRET}
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
-      - MONGO_HOST=${MONGO_HOST}
-      - MONGO_PORT=${MONGO_PORT}
-      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - MONGO_USER=${MONGO_USER}
-      - MONGO_PASSWORD=${MONGO_PASSWORD}
-      - MAILJET_API_KEY=${MAILJET_API_KEY}
-      - MAILJET_API_SECRET=${MAILJET_API_SECRET}
-      - MAILJET_FROM_EMAIL=${MAILJET_FROM_EMAIL}
-    ports:
-      - "3006:8080"
-    depends_on:
-      - database
-    networks:
-      - database
+  # express:
+  #   build: ./server
+  #   env_file:
+  #     - server/.env
+  #   environment:
+  #     - PORT=${PORT}
+  #     - VERSION=${VERSION}
+  #     - JWT_SECRET=${JWT_SECRET}
+  #     - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+  #     - MONGO_HOST=${MONGO_HOST}
+  #     - MONGO_PORT=${MONGO_PORT}
+  #     - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+  #     - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+  #     - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+  #     - MONGO_USER=${MONGO_USER}
+  #     - MONGO_PASSWORD=${MONGO_PASSWORD}
+  #     - MAILJET_API_KEY=${MAILJET_API_KEY}
+  #     - MAILJET_API_SECRET=${MAILJET_API_SECRET}
+  #     - MAILJET_FROM_EMAIL=${MAILJET_FROM_EMAIL}
+  #   ports:
+  #     - "3006:8080"
+  #   depends_on:
+  #     - database
+  #   networks:
+  #     - database
 
-  database:
-    image: mongo:latest
-    container_name: mongo
-    restart: unless-stopped
-    env_file:
-      - server/.env
-    ports:
-      - "3007:27017"
-    volumes:
-      - mongo-data:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    command: ["--auth"]
-    networks:
-      - database
+  # database:
+  #   image: mongo:latest
+  #   container_name: mongo
+  #   restart: unless-stopped
+  #   env_file:
+  #     - server/.env
+  #   ports:
+  #     - "3007:27017"
+  #   volumes:
+  #     - mongo-data:/data/db
+  #     - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  #   command: ["--auth"]
+  #   networks:
+  #     - database
 
 
   web:
