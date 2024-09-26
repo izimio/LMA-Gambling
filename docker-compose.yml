@@ -1,5 +1,6 @@
 services:
   express:
+    container_name: api
     build: ./server
     env_file:
       - server/.env
