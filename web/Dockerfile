@@ -19,6 +19,6 @@ RUN npm install --production
 
 COPY --from=builder /app/build ./build
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD ["node", "build"]
