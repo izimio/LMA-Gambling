@@ -1,6 +1,6 @@
 // =================== [Application] =================== //
 
-export const PORT = process.env.PORT as string;
+export const PORT = process.env.API_PORT as string;
 if (!PORT) {
     throw new Error("PORT is not defined");
 }
